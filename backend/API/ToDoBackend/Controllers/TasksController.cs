@@ -31,7 +31,8 @@ namespace ToDoBackend.Controllers
 
         //get task by id //read
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<List<ToDoTask>>> GetTasks(int id)
+        public async Task<ActionResult<ToDoTask>> GetTask(int id)
+
         {
             var task = await appDbContext.ToDoTasks.FirstOrDefaultAsync(e => e.Id == id);
             if (task == null)
@@ -88,24 +89,30 @@ namespace ToDoBackend.Controllers
         }
 
 
-        //update a task
-        [HttpPut]
-        public async Task<ActionResult<ToDoTask>> UpdateTask(ToDoTask updatedToDoTask)
+        [HttpPut("{id:int}")]
+public async Task<ActionResult<ToDoTask>> UpdateTask(int id, ToDoTask updatedToDoTask)
+{
+    if (updatedToDoTask != null)
+    {
+        var toDoTask = await appDbContext.ToDoTasks.FirstOrDefaultAsync(e => e.Id == id);
+        if (toDoTask != null)
         {
-            if (updatedToDoTask != null)
-            {
-                var toDoTask = await appDbContext.ToDoTasks.FirstOrDefaultAsync(e => e.Id == updatedToDoTask.Id);
-                if (toDoTask != null)
-                {
-                    toDoTask= updatedToDoTask;
-                    await appDbContext.SaveChangesAsync();
+            // Update properties individually
+            toDoTask.TaskName = updatedToDoTask.TaskName;
+            toDoTask.Description = updatedToDoTask.Description;
+            toDoTask.Date = updatedToDoTask.Date;
+            toDoTask.TaskStatus = updatedToDoTask.TaskStatus;
 
-                    var tasks = await appDbContext.ToDoTasks.ToListAsync();
-                    return Ok(tasks);
-                }
-                return NotFound();
-            }
-            return BadRequest();
+            await appDbContext.SaveChangesAsync();
+
+            // Return the updated task
+            return Ok(toDoTask);
         }
+        return NotFound();
+    }
+    return BadRequest();
+}
+
+
     }
 }

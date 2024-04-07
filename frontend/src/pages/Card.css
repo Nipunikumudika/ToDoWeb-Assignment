@@ -16,7 +16,7 @@
 }
   
   .btn-edit,
-  .btn-delete {
+  .btn-delete{
     height: 6vh;
     width: 6vh;
     display: flex;
@@ -34,8 +34,14 @@
 }
   
 @media (max-width: 600px) {
+
+  .icon{
+    width: 2vh;
+    height: 2vh;
+  }
   .btn-edit,
-  .btn-delete {
+  .btn-delete
+   {
     width: 4vh; 
     height: 4vh;
   }
@@ -63,7 +69,7 @@
   }
   
   .card-date ,
-  .card-time {
+  .card-time{
     text-align: left;
     font-size: 1.25em;
     margin-right: 1.5vw;

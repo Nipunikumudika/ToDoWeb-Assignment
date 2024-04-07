@@ -9,8 +9,24 @@
   -moz-border-radius: 50px;
   -ms-border-radius: 50px;
   -o-border-radius: 50px;
+/* overflow-y: auto; */
+}
+
+.srollingWindow {
+  max-height: calc(100% - 180px);
   overflow-y: auto;
 }
+
+.srollingWindow::-webkit-scrollbar-track {
+  background-color: #0ff103;
+}
+
+/* Firefox Scrollbar */
+.srollingWindow {
+  scrollbar-width: thin;
+  scrollbar-color: #047d0e #aef6b4;
+}
+
 
 .background{
     width: 100vw;
@@ -68,7 +84,43 @@
   height: 30px;
   margin: 2px;
   background-color: lightgreen;
+  cursor: pointer;
 }
+
+
+
+
+
+.input-field {
+  width: 70%;
+  font-size: 15px;
+}
+
+.formRows{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+
+.datetimeInput{
+  width: 70.5%;
+}
+
+.statusInput{
+  width: 71%;
+}
+
+.changeBtn{
+  background-color: lightgreen;
+  border-radius: 30px;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  -ms-border-radius: 30px;
+  -o-border-radius: 30px;
+}
+
 
 
 @media (max-width: 600px) {
@@ -79,4 +131,17 @@
   .inputDescription{
     width: 45%;
   }
+
+  .formRows{
+    flex-direction: column;
+  }
+
+  .input-field,
+  .datetimeInput,
+  .statusInput{
+    width: 100%;
+  }
+
 }
+
+
