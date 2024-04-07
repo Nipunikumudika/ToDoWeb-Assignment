@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\backend\\API\\ToDoBackend\\ToDoBackend.csproj": {}
+    "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\ToDoWeb-Assignment\\backend\\API\\ToDoBackend\\ToDoBackend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\backend\\API\\ToDoBackend\\ToDoBackend.csproj": {
+    "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\ToDoWeb-Assignment\\backend\\API\\ToDoBackend\\ToDoBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\backend\\API\\ToDoBackend\\ToDoBackend.csproj",
+        "projectUniqueName": "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\ToDoWeb-Assignment\\backend\\API\\ToDoBackend\\ToDoBackend.csproj",
         "projectName": "ToDoBackend",
-        "projectPath": "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\backend\\API\\ToDoBackend\\ToDoBackend.csproj",
+        "projectPath": "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\ToDoWeb-Assignment\\backend\\API\\ToDoBackend\\ToDoBackend.csproj",
         "packagesPath": "C:\\Users\\GF63 10SCSR\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\backend\\API\\ToDoBackend\\obj\\",
+        "outputPath": "C:\\Users\\GF63 10SCSR\\Desktop\\ToDo Web Assignment\\ToDoWeb-Assignment\\backend\\API\\ToDoBackend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

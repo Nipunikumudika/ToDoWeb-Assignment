@@ -1,19 +1,9 @@
-.background1 {
-  background-color: transparent;
-  margin: 80px 15px 30px 30px;
-  width: 20vw;
-
-  box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.65);
-
-  background: linear-gradient(45deg, rgb(133, 245, 12),transparent,transparent);
-}
-
 .background2 {
     background-color: transparent;
     background: linear-gradient(45deg, #ff26f9,transparent,transparent, #ff26f9);
     box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.65);
-  margin: 80px 30px 30px 15px;
-  width: 74vw;
+  margin: 80px 30px 30px 30px;
+  width: 100vw;
   border-radius: 50px;
   -webkit-border-radius: 50px;
   -moz-border-radius: 50px;
@@ -52,3 +42,5 @@
 [data-popup='tooltip'].popup-overlay {
   background: transparent;
 }
+
+

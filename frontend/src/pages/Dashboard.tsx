@@ -5,205 +5,186 @@ import check from "../Images/check.jpg";
 import cross from "../Images/cross.jpg";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../components/Card.css";
+import "./Card.css";
 // import { Route, Routes, useNavigate } from "react-router-dom";
 import Popup from "../components/popup";
+import { ToDoTask } from "../Models/ToDoTask";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import AddTaskForm from "../components/AddTaskForm";
 
 function Dashboard() {
   // const navigate = useNavigate();
-  let [taskname, setTaskname] = useState();
-  let [taskdate, setTaskDate] = useState();
-  let [taskiscompleted, setaTaskIsCompleted] = useState();
-  let [taskid, setTaskId] = useState();
-  let [alltasks, setallTasks] = useState([]);
-  let [states, setState] = useState();
-  let [editstate, setEditState] = useState("0");
-  let [password, setPassword] = useState();
-  // const bcrypt = require("bcryptjs");
+  const bcrypt = require("bcryptjs");
   const [isOpen, setIsOpen] = useState(false);
+
+  // const location = useLocation();
+  const [userid, setUserid] = useState<number>();
+  const [taskid, setTaskid] = useState<number>();
+  const [taskName, setTaskname] = useState<string>("");
+  const [taskdate, setTaskDate] = useState<string>("");
+  const [taskiscompleted, setTaskIsCompleted] = useState<boolean>(false);
+  const [editState, setEditState] = useState<number>(0);
+  const [allTasks, setAllTasks] = useState<ToDoTask[]>([]);
+  const [password, setPassword] = useState<string>("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
 
   const togglePopup = () => {
     setIsOpen(!isOpen);
   };
 
-  // const location = useLocation();
+  const handleEdit = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    key: number
+  ) => {
+    event.preventDefault();
+    setEditState(1);
+    try {
+      const url = `http://localhost:5000/tasks/${key}`;
+      const response = await axios.get<ToDoTask>(url);
+      setTaskid(key);
+      setTaskname(response.data.taskName);
+      setTaskDate(response.data.date);
+      setTaskIsCompleted(response.data.taskStatus);
+    } catch (error) {
+      console.log("Error editing ToDoTask:", error);
+    }
+  };
 
-  // const userid = location.state.userid;
+  const handlechangepassword = async (
+    event: React.FormEvent<HTMLFormElement>,
+    key: string
+  ) => {
+    event.preventDefault();
+    let hashedPass;
+    const url = `http://localhost:5000/users/${userid}`;
 
-  // useEffect(() => {
-  //   console.log("hi");
-  //   const dataRes = async () => {
-  //     const responsetasks = await axios.get("http://localhost:5000/tasks");
-  //     setallTasks(
-  //       responsetasks.data.filter((task) => {
-  //         return task.user === userid;
-  //       })
-  //     );
-  //   };
+    if (password) {
+      hashedPass = await bcrypt.hash(password, 8);
+    }
 
-  //   dataRes();
-  // }, [states]);
+    try {
+      const submitData = {
+        // username: location.state.username,
+        password: hashedPass,
+      };
+      const response = await axios.patch(url, submitData);
+      console.log(response);
+      alert("Updated");
+      // togglePopup();
+      // navigate("../");
+    } catch (error) {
+      alert("Error! cannot update");
+    }
+  };
 
-  // const handleEdit = async (event, key) => {
-  //   setEditState(1);
-  //   console.log("key index: ", key);
-  //   const url = `http://localhost:5000/tasks/${key}`;
+  const handleDelete = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    key: number
+  ) => {
+    event.preventDefault();
+    try {
+      const url = `https://localhost:7110/api/Tasks?id=${key}`;
 
-  //   event.preventDefault();
-  //   try {
-  //     const response = await axios.get(url);
-  //     console.log(response);
-  //     setTaskId(key);
-  //     setTaskname(response.data.name);
-  //     setTaskDate(response.data.date);
-  //     setaTaskIsCompleted(response.data.isCompleted);
-  //   } catch (error) {
-  //     console.log("Error!");
-  //   }
-  // };
+      console.log(url);
+      const response = await axios.delete(url);
+      console.log(response);
+      console.log("ToDoTask deleted successfully");
+      fetchData();
+    } catch (error) {
+      alert("Error! Cannot Delete");
+    }
+  };
 
-  // const handleEditTask = async (event, key) => {
-  //   console.log("key index: ", userid);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  //   const url = `http://localhost:5000/tasks/${taskid}`;
-  //   console.log(url);
-  //   event.preventDefault();
-  //   try {
-  //     const submitData = {
-  //       user: userid,
-  //       name: taskname,
-  //       date: taskdate,
-  //       isCompleted: taskiscompleted,
-  //     };
-  //     console.log(submitData);
-  //     const response = await axios.patch(url, submitData);
-  //     console.log(response);
-  //     setState(!states);
-  //     setTaskId("");
-  //     setTaskname("");
-  //     setTaskDate("");
-  //     setaTaskIsCompleted("");
-  //     setEditState(0);
-  //   } catch (error) {
-  //     console.log("Error! cannot update");
-  //   }
-  // };
-  // let hashedPass;
-  // const handlechangepassword = async (event, key) => {
-  //   console.log(location.state.userid);
-  //   console.log(password);
-  //   const url = `http://localhost:5000/users/${userid}`;
-  //   console.log(url);
+  const handleNewTask = async () => {
+    const url = "https://localhost:7110/api/Tasks";
+    try {
+      const dateTime = new Date(`${date}T${time}`);
+      const submitData = {
+        userId: userid,
+        taskName: taskName,
+        date: dateTime,
+        taskStatus: taskiscompleted,
+        description: description,
+      };
+      const response = await axios.post(url, submitData);
+      console.log(response);
+      alert("ToDoTask added successfully");
+      setTaskname("");
+      setDate("");
+      setTaskIsCompleted(false);
+    } catch (error) {
+      alert("Failed to add ToDoTask");
+    }
+  };
 
-  //   if (password) {
-  //     hashedPass = await bcrypt.hash(password, 8);
-  //   }
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("https://localhost:7110/api/Tasks");
+      setAllTasks(response.data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
 
-  //   try {
-  //     const submitData = {
-  //       username: location.state.username,
-  //       password: hashedPass,
-  //     };
-  //     console.log(submitData);
-  //     const response = await axios.patch(url, submitData);
-  //     console.log(response);
-  //     alert("Updated");
-  //     togglePopup();
-  //     navigate("../");
-  //   } catch (error) {
-      
-  //     alert("Error! cannot update");
-  //   }
-  // };
+  const userDetailsCards = allTasks.map((ToDoTask, key) => {
+    console.log(allTasks);
+    let image = cross;
+    if (ToDoTask.taskStatus === true) {
+      image = check;
+    }
+    return (
+      <div className="card-bg" key={ToDoTask.id}>
+        <img src={image} alt="user photo" className="card-image" />
+        <div style={{ display: "flex", flexDirection: "column", width: "96%" }}>
+          <div className="card-name">{ToDoTask.taskName}</div>
+          <div className="card-description">{ToDoTask.description}</div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <div className="card-date">
+                {new Date(ToDoTask.date).toLocaleDateString()}
+              </div>
+              <div className="card-time">
+                {new Date(ToDoTask.date).toLocaleTimeString()}
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <button
+                className="btn-edit"
+                onClick={(event) => handleEdit(event, ToDoTask.id)}
+              >
+                <FontAwesomeIcon icon={faEdit} />
+              </button>
+              <button
+                className="btn-delete"
+                onClick={(event) => handleDelete(event, ToDoTask.id)}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  });
 
-  // const handleDelete = async (event, key) => {
-  //   // console.log("key index: ", key);
-
-  //   const url = `http://localhost:5000/tasks/${key}`;
-
-  //   event.preventDefault();
-  //   try {
-  //     const response = await axios.delete(url);
-  //     console.log(response);
-      
-  //     setTaskname("");
-  //     setTaskDate("");
-  //     setTaskId("");
-  //     setaTaskIsCompleted("");
-  //     setState(!states);
-  //     alert("Task delete successfully");
-  //   } catch (error) {
-  //     alert("Error! Cannot Deleted");
-  //   }
-  // };
-
-  // console.log(alltasks);
-
-  // const userDetailsCards = alltasks.map((task, key) => {
-  //   console.log("userDetailsCards");
-  //   let image = cross;
-
-  //   if (task.isCompleted == "true") {
-  //     image = check;
-  //   }
-  //   let key2 = task._id;
-  //   return (
-  //     <div className="card-bg">
-  //       <img src={image} alt="user photo" className="card-image" />
-  //       <div className="card-name">{task.name}</div>
-  //       <button
-  //         className="btn-edit"
-  //         onClick={(event) => handleEdit(event, key2)}
-  //         //key={task._id}
-  //       >
-  //         Edit
-  //       </button>
-  //       <button
-  //         className="btn-delete"
-  //         onClick={(event) => handleDelete(event, key2)}
-  //         key={task._id}
-  //       >
-  //         Delete
-  //       </button>
-  //       <div className="card-date">{task.date}</div>
-  //     </div>
-  //   );
-  // });
-
-  // const handlesubmit = async (event) => {
-  //   if (taskid) {
-  //     alert("Wrong");
-  //   } else {
-  //     console.log("kk");
-  //     const url = "http://localhost:5000/tasks";
-
-  //     event.preventDefault();
-  //     try {
-  //       const submitData = {
-  //         user: userid,
-  //         name: taskname,
-  //         date: taskdate,
-  //         isCompleted: taskiscompleted,
-  //       };
-
-  //       const response = await axios.post(url, submitData);
-  //       console.log(response);
-  //       alert("Task added successfully");
-  //       setTaskname("");
-  //     setTaskDate("");
-  //     setTaskId("");
-  //     setaTaskIsCompleted("");
-  //       setState(!states);
-  //     } catch (error) {
-  //       alert("Failed to add task");
-  //     }
-  //   }
-  // };
-
-
-  // const handdleLogout = async (event) => {
-  //   navigate("../");
-  // }
+  const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    // navigate("../");
+  };
 
   return (
     <div className="background">
@@ -223,13 +204,25 @@ function Dashboard() {
           {/* {location.state.username} */}
         </div>
         <button
-          style={{ height: "5vh", padding: "auto", margin: "auto",borderRadius:"5px",border:"none"  }}
+          style={{
+            height: "5vh",
+            padding: "auto",
+            margin: "auto",
+            borderRadius: "5px",
+            border: "none",
+          }}
           // onClick={(event) => togglePopup(event, userid)}
         >
           Change Password
         </button>
         <button
-          style={{ height: "5vh", padding: "auto", margin: "auto",borderRadius:"5px",border:"none" }}
+          style={{
+            height: "5vh",
+            padding: "auto",
+            margin: "auto",
+            borderRadius: "5px",
+            border: "none",
+          }}
           // onClick={(event) => handdleLogout(event)}
         >
           LogOut
@@ -279,150 +272,38 @@ function Dashboard() {
           />
         )}
       </div>
-      <div style={{ display: "flex" }}>
-        <div className="background1">
-          <br />
-          <h3>
-            <u>Add New Task</u>
-          </h3>
 
-          {/* <form onSubmit={handlesubmit}> */}
-          <form>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <div style={{ fontSize: 15, fontWeight: "bold" }}>Task Name</div>
-              <span style={{ display: "inline-block", width: 25 }}></span>
-              <input
-                style={{ fontSize: 15 }}
-                type="text"
-                name="taskname"
-                placeholder="Enter your task name"
-                value={taskname}
-                onChange={(inputTaskname) => {
-                  // setTaskname(inputTaskname.target.value);
-                }}
-              />
-            </div>
-            <br />
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <div style={{ fontSize: 15, fontWeight: "bold" }}>Deadline</div>
-              <span style={{ display: "inline-block", width: 40 }}></span>
-              <input
-                style={{ fontSize: 15 }}
-                type="text"
-                name="taskdate"
-                placeholder="Enter your dedline date"
-                value={taskdate}
-                onChange={(inputTaskdate) => {
-                  // setTaskDate(inputTaskdate.target.value);
-                }}
-              />
-            </div>
-
-            <br />
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <div style={{ fontSize: 15, fontWeight: "bold" }}>
-                Is Completed
-              </div>
-              <span style={{ display: "inline-block", width: 10 }}></span>
-              <input
-                style={{ fontSize: 15 }}
-                type="text"
-                name="taskiscompleted"
-                placeholder="Type true or false"
-                value={taskiscompleted}
-                onChange={(inputtaskiscompleted) => {
-                  // setaTaskIsCompleted(inputtaskiscompleted.target.value);
-                }}
-              />
-            </div>
-
-            <br />
-            <center>
-              <button
-                className="loginbtn"
-                type="submit"
-                style={{ fontSize: 20, fontWeight: "bold" }}
-                disabled={editstate == "1" ? true : false}
-              >
-                Submit
-              </button>
-            </center>
-          </form>
-          <br />
-          <br />
-          <br />
-
-          <h3>
-            <u>Edit Task</u>
-          </h3>
-
-          {/* <form onSubmit={handleEditTask}> */}
-          <form>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <div style={{ fontSize: 15, fontWeight: "bold" }}>Task Name</div>
-              <span style={{ display: "inline-block", width: 25 }}></span>
-              <input
-                style={{ fontSize: 15 }}
-                type="text"
-                name="taskname"
-                placeholder="Enter your task name"
-                value={taskname}
-                onChange={(inputTaskname) => {
-                  // setTaskname(inputTaskname.target.value);
-                }}
-              />
-            </div>
-            <br />
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <div style={{ fontSize: 15, fontWeight: "bold" }}>Deadline</div>
-              <span style={{ display: "inline-block", width: 40 }}></span>
-              <input
-                style={{ fontSize: 15 }}
-                type="text"
-                name="taskdate"
-                placeholder="Enter your dedline date"
-                value={taskdate}
-                onChange={(inputTaskdate) => {
-                  // setTaskDate(inputTaskdate.target.value);
-                }}
-              />
-            </div>
-
-            <br />
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <div style={{ fontSize: 15, fontWeight: "bold" }}>
-                Is Completed
-              </div>
-              <span style={{ display: "inline-block", width: 10 }}></span>
-              <input
-                style={{ fontSize: 15 }}
-                type="text"
-                name="taskiscompleted"
-                placeholder="Type true or false"
-                value={taskiscompleted}
-                onChange={(inputtaskiscompleted) => {
-                  // setaTaskIsCompleted(inputtaskiscompleted.target.value);
-                }}
-              />
-            </div>
-
-            <br />
-            <center>
-              <button
-                className="loginbtn"
-                type="submit"
-                style={{ fontSize: 20, fontWeight: "bold" }}
-                disabled={editstate == "0" ? true : false}
-              >
-                Edit
-              </button>
-            </center>
-          </form>
-        </div>
-        <div className="background2">
-          <h1 style={{ textAlign: "center" }}>Tasks</h1>
-          {/* <div>{userDetailsCards}</div>; */}
-        </div>
+      <div className="background2">
+        <h1 style={{ textAlign: "center" }}>Tasks</h1>
+        {/* add a task */}
+        <form onSubmit={handleNewTask}>
+          <input
+            type="text"
+            placeholder="Task Name"
+            value={taskName}
+            onChange={(e) => setTaskname(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <input
+            type="date"
+            placeholder="Date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+          <input
+            type="time"
+            placeholder="Time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+          />
+          <button type="submit">Add Task</button>
+        </form>
+        <div>{userDetailsCards}</div>;
       </div>
     </div>
   );
