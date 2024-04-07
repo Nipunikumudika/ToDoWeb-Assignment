@@ -69,3 +69,14 @@
   margin: 2px;
   background-color: lightgreen;
 }
+
+
+@media (max-width: 600px) {
+  .inputName{
+    width: 40%;
+  } 
+
+  .inputDescription{
+    width: 45%;
+  }
+}

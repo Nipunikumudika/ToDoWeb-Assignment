@@ -33,6 +33,13 @@
     -o-border-radius: 50%;
 }
   
+@media (max-width: 600px) {
+  .btn-edit,
+  .btn-delete {
+    width: 4vh; 
+    height: 4vh;
+  }
+}
   
   .card-name {
     text-align: left;

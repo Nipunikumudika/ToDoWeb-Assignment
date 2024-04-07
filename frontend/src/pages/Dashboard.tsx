@@ -53,33 +53,6 @@ function Dashboard() {
     }
   };
 
-  const handlechangepassword = async (
-    event: React.FormEvent<HTMLFormElement>,
-    key: string
-  ) => {
-    event.preventDefault();
-    let hashedPass;
-    const url = `http://localhost:5000/users/${userid}`;
-
-    if (password) {
-      hashedPass = await bcrypt.hash(password, 8);
-    }
-
-    try {
-      const submitData = {
-        // username: location.state.username,
-        password: hashedPass,
-      };
-      const response = await axios.patch(url, submitData);
-      console.log(response);
-      alert("Updated");
-      // togglePopup();
-      // navigate("../");
-    } catch (error) {
-      alert("Error! cannot update");
-    }
-  };
-
   const handleDelete = async (
     event: React.MouseEvent<HTMLButtonElement>,
     key: number
@@ -190,7 +163,7 @@ function Dashboard() {
       <div
         style={{
           backgroundColor: "rgb(133, 245, 12)",
-          width: "300px",
+          width: "150px",
           height: "60px",
           position: "absolute",
           right: "30px",
@@ -206,21 +179,12 @@ function Dashboard() {
           style={{
             height: "5vh",
             padding: "auto",
-            margin: "auto",
+            margin: "10px",
             borderRadius: "5px",
             border: "none",
-          }}
-          // onClick={(event) => togglePopup(event, userid)}
-        >
-          Change Password
-        </button>
-        <button
-          style={{
-            height: "5vh",
-            padding: "auto",
-            margin: "auto",
-            borderRadius: "5px",
-            border: "none",
+            width:"100%",
+            backgroundColor:"transparent",
+            cursor:"pointer"
           }}
           // onClick={(event) => handdleLogout(event)}
         >
