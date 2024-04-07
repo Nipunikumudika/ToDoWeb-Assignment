@@ -14,7 +14,42 @@
     -ms-border-radius: 20px;
     -o-border-radius: 20px;
 }
+
+.past-task{
+  margin: 2vh auto;
+    background-color: rgb(248, 131, 131);
+    padding: 1vw;
+    width: 85%;
+    border: 2px solid;
+    border-color: green;
+    border-radius: 20px;
+    display: flex;
+    flex-wrap: wrap;
   
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+}
+  
+.completed-task{
+  margin: 2vh auto;
+    background-color: rgb(189, 183, 183);
+    padding: 1vw;
+    width: 85%;
+    border: 2px solid;
+    border-color: green;
+    border-radius: 20px;
+    display: flex;
+    flex-wrap: wrap;
+  
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+}
+
+
   .btn-edit,
   .btn-delete{
     height: 6vh;

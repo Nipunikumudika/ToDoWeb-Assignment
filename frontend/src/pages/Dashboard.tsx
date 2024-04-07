@@ -1,8 +1,8 @@
 import "./Dashboard.css";
 
 import { useLocation } from "react-router-dom";
-import check from "../Images/check.jpg";
-import cross from "../Images/cross.jpg";
+import check from "../Images/check.png";
+import cross from "../Images/cross.png";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./Card.css";
@@ -75,8 +75,12 @@ function Dashboard() {
       const url = `https://localhost:7110/api/Tasks/${taskid}`;
       const dateTime = new Date(`${date}T${time}`);
       console.log(dateTime);
-
-      // Format date and time to "YYYY-MM-DDTHH:mm:ss.sss" format
+      const currentDate = new Date();
+      if (dateTime < currentDate) {
+        alert("Failed to update ToDoTask. Check Date & Time");
+        return;
+      }
+      
       const formattedDateTime = dateTime
         .toISOString()
         .replace(/\.(\d+)Z$/, ".$1");
@@ -160,19 +164,33 @@ function Dashboard() {
   const fetchData = async () => {
     try {
       const response = await axios.get("https://localhost:7110/api/Tasks");
-      setAllTasks(response.data);
+      if (response && response.data && Array.isArray(response.data)) {
+        const sortedTasks = response.data.sort((a, b) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateA - dateB;
+        });
+        setAllTasks(sortedTasks);
+      } else {
+        console.error("Invalid response format or data structure:", response);
+      }
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
   };
+  
+  
 
   const userDetailsCards = allTasks.map((ToDoTask, key) => {
     let image = cross;
     if (ToDoTask.taskStatus === true) {
       image = check;
     }
+    const currentDate = new Date();
+    const taskDate = new Date(ToDoTask.date);
+   
     return (
-      <div className="card-bg" key={ToDoTask.id}>
+      <div className={`card-bg ${(new Date(ToDoTask.date) < currentDate && ToDoTask.taskStatus === false) ? 'past-task' : (new Date(ToDoTask.date) < currentDate && ToDoTask.taskStatus === true ? 'completed-task' : '')}`} key={ToDoTask.id}>
         <img src={image} alt="user photo" className="card-image" />
         <div style={{ display: "flex", flexDirection: "column", width: "96%" }}>
           <div className="card-name">{ToDoTask.taskName}</div>
