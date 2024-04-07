@@ -44,3 +44,28 @@
 }
 
 
+.inputName{
+  width: 30%;
+  height: 30px;
+  margin: 2px;
+}
+
+.inputDescription{
+  width: 40%;
+  height: 30px;
+  margin: 2px;
+}
+
+.inputDate,
+.inputTime{
+  width: 10%;
+  height: 30px;
+  margin: 2px;
+}
+
+
+.addButton{
+  height: 30px;
+  margin: 2px;
+  background-color: lightgreen;
+}

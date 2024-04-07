@@ -12,7 +12,6 @@ import { ToDoTask } from "../Models/ToDoTask";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import AddTaskForm from "../components/AddTaskForm";
 
 function Dashboard() {
   // const navigate = useNavigate();
@@ -276,33 +275,41 @@ function Dashboard() {
       <div className="background2">
         <h1 style={{ textAlign: "center" }}>Tasks</h1>
         {/* add a task */}
-        <form onSubmit={handleNewTask}>
-          <input
-            type="text"
-            placeholder="Task Name"
-            value={taskName}
-            onChange={(e) => setTaskname(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <input
-            type="date"
-            placeholder="Date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-          <input
-            type="time"
-            placeholder="Time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-          />
-          <button type="submit">Add Task</button>
-        </form>
+        <center>
+          <form onSubmit={handleNewTask}>
+            <input
+              className="inputName"
+              type="text"
+              placeholder="Task Name"
+              value={taskName}
+              onChange={(e) => setTaskname(e.target.value)}
+            />
+            <input
+              className="inputDescription"
+              type="text"
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <input
+              className="inputDate"
+              type="date"
+              placeholder="Date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+            <input
+              className="inputTime"
+              type="time"
+              placeholder="Time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+            />
+            <button className="addButton" type="submit">
+              Add Task
+            </button>
+          </form>
+        </center>
         <div>{userDetailsCards}</div>;
       </div>
     </div>
