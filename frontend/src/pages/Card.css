@@ -1,0 +1,65 @@
+ .card-bg {
+    margin: 2vh auto;
+    background-color: white;
+    padding: 1vw;
+    width: 85%;
+    border: 2px solid;
+    border-color: green;
+    border-radius: 20px;
+    display: flex;
+    flex-wrap: wrap;
+  
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+}
+  
+  .btn-edit,
+  .btn-delete {
+    height: 6vh;
+    width: 6vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    margin-right: 1.5vw;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: rgb(183, 246, 183);
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}
+  
+  
+  .card-name {
+    text-align: left;
+    font-size: 1.25em;
+    flex: 1;
+    font-weight: bold;
+    width: 100%;
+  }
+  
+  .card-description {
+    text-align: left;
+    font-size: 1.25em;
+    flex: 1;
+  }
+
+  .card-image {
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  
+  .card-date ,
+  .card-time {
+    text-align: left;
+    font-size: 1.25em;
+    margin-right: 1.5vw;
+  }
+
+
