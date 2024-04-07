@@ -1,0 +1,54 @@
+.background1 {
+  background-color: transparent;
+  margin: 80px 15px 30px 30px;
+  width: 20vw;
+
+  box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.65);
+
+  background: linear-gradient(45deg, rgb(133, 245, 12),transparent,transparent);
+}
+
+.background2 {
+    background-color: transparent;
+    background: linear-gradient(45deg, #ff26f9,transparent,transparent, #ff26f9);
+    box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.65);
+  margin: 80px 30px 30px 15px;
+  width: 74vw;
+  border-radius: 50px;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  -ms-border-radius: 50px;
+  -o-border-radius: 50px;
+  overflow-y: auto;
+}
+
+.background{
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    background-image:url('../Images/allbackground.jpg');
+    background-repeat: no-repeat;
+  background-size:100% 100%;
+
+}
+.popup-content {
+  margin: auto;
+  background: rgb(255, 255, 255);
+  width: 50%;
+  padding: 5px;
+}
+.popup-arrow {
+  color: rgb(255, 255, 255);
+}
+[role='tooltip'].popup-content {
+  width: 200px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 0px 3px;
+}
+
+.popup-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+[data-popup='tooltip'].popup-overlay {
+  background: transparent;
+}
