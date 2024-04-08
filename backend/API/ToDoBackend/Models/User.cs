@@ -1,8 +1,10 @@
-﻿namespace ToDoBackend.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ToDoBackend.Models
 {
     public class User
     {
-        public int Id { get; set; }
+        [Key]
         public string? Username { get; set; }
         public string? Password { get; set; }
     }

@@ -4,5 +4,6 @@ export interface ToDoTask {
     description: string;
     taskStatus: boolean;
     date: string; 
+    time: string; 
     userId: number;
 }
