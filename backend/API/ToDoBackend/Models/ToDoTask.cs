@@ -16,9 +16,12 @@ namespace ToDoBackend.Models
         public bool TaskStatus { get; set; }
 
         [Required(ErrorMessage = "Date is required")]
-        public DateTime Date { get; set; }
+        public string? Date { get; set; }
+
+        [Required(ErrorMessage = "Time is required")]
+        public string? Time { get; set; }
 
         [Required(ErrorMessage = "UserId is required")]
-        public int UserId { get; set; }
+        public string? UserName { get; set; }
     }
 }

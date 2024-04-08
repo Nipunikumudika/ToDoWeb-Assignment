@@ -101,6 +101,7 @@ public async Task<ActionResult<ToDoTask>> UpdateTask(int id, ToDoTask updatedToD
             toDoTask.TaskName = updatedToDoTask.TaskName;
             toDoTask.Description = updatedToDoTask.Description;
             toDoTask.Date = updatedToDoTask.Date;
+            toDoTask.Time = updatedToDoTask.Time;
             toDoTask.TaskStatus = updatedToDoTask.TaskStatus;
 
             await appDbContext.SaveChangesAsync();

@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoBackend.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ToDoBackend.Data
 {
@@ -10,103 +14,59 @@ namespace ToDoBackend.Data
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext appDbContext;
+        private readonly AppDbContext _appDbContext;
 
         public UsersController(AppDbContext appDbContext)
         {
-            this.appDbContext = appDbContext;
+            _appDbContext = appDbContext;
         }
 
-
-
-        //get all users //read
-        [HttpGet]
-        public async Task<ActionResult<List<User>>> GetUsers()
-        {
-            var users = await appDbContext.Users.ToListAsync();
-            return Ok(users);
-        }
-
-
-
-        //get user by id //read
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<List<User>>> GetUser(int id)
-        {
-            var user = await appDbContext.Users.FirstOrDefaultAsync(e => e.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(user);
-            }
-
-        }
-
-
-
-
-
-        //create a user //post
+        // Create a user // POST
         [HttpPost]
         public async Task<ActionResult<List<User>>> AddUser(User newUser)
         {
             if (newUser != null)
             {
-                appDbContext.Users.Add(newUser);
-                await appDbContext.SaveChangesAsync();
+                // Encrypt password
+                newUser.Password = EncryptPassword(newUser.Password!);
 
-                var users = await appDbContext.Users.ToListAsync();
+                _appDbContext.Users.Add(newUser);
+                await _appDbContext.SaveChangesAsync();
+
+                var users = await _appDbContext.Users.ToListAsync();
                 return Ok(users);
-
             }
             return BadRequest();
         }
 
-
-
-
-
-
-        //delete a user //delete
-        [HttpDelete]
-        public async Task<ActionResult<List<User>>> DeleteUser(int id)
+        // Login // POST
+        [HttpPost("login")]
+        public async Task<ActionResult<User>> Login(User givenUser)
         {
-            var user = await appDbContext.Users.FirstOrDefaultAsync(e => e.Id == id);
-            if (user != null)
+            // Find user by username
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(u => u.Username == givenUser.Username);
+
+            // Check if user exists and password matches
+            if (user != null && VerifyPassword(givenUser.Password!, user.Password!))
             {
-                appDbContext.Users.Remove(user);
-                await appDbContext.SaveChangesAsync();
-
-                var users = await appDbContext.Users.ToListAsync();
-                return Ok(users);
-
+                return Ok(user);
             }
-            return BadRequest();
+
+            return Unauthorized();
         }
 
-
-        //update a user
-        [HttpPut]
-        public async Task<ActionResult<User>> UpdateUser(User UpdatedUser)
+        // Helper method to encrypt password
+        private static string EncryptPassword(string password)
         {
-            if (UpdatedUser != null)
-            {
-                var user = await appDbContext.Users.FirstOrDefaultAsync(e => e.Id == UpdatedUser.Id);
-                if (user != null)
-                {
-                    user = UpdatedUser;
-                    await appDbContext.SaveChangesAsync();
+            using SHA256 sha256 = SHA256.Create();
+            byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(hashedBytes);
+        }
 
-                    var users = await appDbContext.Users.ToListAsync();
-                    return Ok(users);
-                }
-                return NotFound();
-            }
-            return BadRequest();
+        // Helper method to verify password
+        private static bool VerifyPassword(string enteredPassword, string storedPassword)
+        {
+            return storedPassword == EncryptPassword(enteredPassword);
         }
     }
-
 }

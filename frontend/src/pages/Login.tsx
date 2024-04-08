@@ -1,77 +1,109 @@
+// do login and registration of users
 import "./Login.css";
-import clock from "../Images/clock_right.png";
 import futuretodo from "../Images/future-todo.png";
 import { useState } from "react";
 import axios from "axios";
-// import { Route, Routes, useNavigate } from "react-router-dom";
-import Popup from "../components/popup";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface User {
-  _id: string;
   username: string;
+  password: string;
 }
 
 function Login(): JSX.Element {
-  //   const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [loginUsername, setLoginUsername] = useState<string>("");
+  const [loginPassword, setLoginPassword] = useState<string>("");
+  const [registerUsername, setRegisterUsername] = useState<string>("");
+  const [registerPassword, setRegisterPassword] = useState<string>("");
 
-  const handleCreateUser = async (event: React.FormEvent<HTMLFormElement>) => {
+  //register a user
+  const handlesubmitRegister = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
-    const postURL = "http://localhost:5000/users";
-    fetch(postURL, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-    }).then(() => {
-      alert("You have been added to the system!");
-      togglePopup();
-      setUsername("");
-      setPassword("");
-    });
+    const postURL = "https://localhost:7110/api/Users";
+    try {
+      const response = await fetch(postURL, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: registerUsername,
+          password: registerPassword,
+        }),
+      });
+
+      // Check if the response is successful
+      if (!response.ok) {
+        setRegisterPassword("");
+        setRegisterUsername("");
+        throw new Error(response.statusText);
+      }
+
+      // If successful, navigate to the dashboard
+      navigate("Dashboard", {
+        state: {
+          username: registerUsername,
+        },
+      });
+      console.log("added to system");
+      setRegisterUsername("");
+      setRegisterPassword("");
+    } catch (error) {
+      // Handle the error here
+      toast("Error");
+      console.error("Error:", error);
+      setRegisterUsername("");
+      setRegisterPassword("");
+    }
   };
 
-  const togglePopup = () => {
-    setIsOpen(!isOpen);
-  };
 
-  const handlesubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //login user
+  const handlesubmitLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const url = "http://localhost:5000/users/login";
+    const url = "https://localhost:7110/api/Users/login";
 
     try {
       const submitData = {
-        username: username,
-        password: password,
+        username: loginUsername,
+        password: loginPassword,
       };
 
       const response = await axios.post<User>(url, submitData);
-      const id = response.data._id;
+      if (response.status < 200 || response.status >= 300) {
+        toast("Check Username & Password");
+        setLoginUsername("");
+        setLoginPassword("");
+        return;
+      }
+      const username = response.data.username;
       if (response) {
-        // navigate("Welcomebackpage", {
-        //   state: {
-        //     username: response.data.username,
-        //     userid: response.data._id,
-        //   },
-        // });
+        navigate("Dashboard", {
+          state: {
+            username: response.data.username,
+          },
+        });
+        console.log(username);
       }
     } catch (error) {
-      alert("Wrong Username or Password");
+      toast("Check Username & Password");
+      setLoginUsername("");
+      setLoginPassword("");
     }
   };
 
   return (
     <div className="backgroundlogin">
+      <ToastContainer />
       <center>
-        <br/>
+        <br />
         <img
           className="futuretodo"
           src={futuretodo}
@@ -87,27 +119,27 @@ function Login(): JSX.Element {
           </center>
 
           <center>
-            <form onSubmit={handlesubmit} style={{ margin: "auto" }}>
+            <form onSubmit={handlesubmitRegister} style={{ margin: "auto" }}>
               <div className="input-group">
                 <label htmlFor="username">Username</label>
                 <input
                   type="text"
-                  id="username"
+                  id="username1"
                   name="username"
                   placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={registerUsername}
+                  onChange={(e) => setRegisterUsername(e.target.value)}
                 />
               </div>
               <div className="input-group">
                 <label htmlFor="password">Password</label>
                 <input
                   type="password"
-                  id="password"
+                  id="password1"
                   name="password"
                   placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
                 />
               </div>
 
@@ -123,27 +155,27 @@ function Login(): JSX.Element {
           </center>
 
           <center>
-            <form onSubmit={handlesubmit} style={{ margin: "auto" }}>
+            <form onSubmit={handlesubmitLogin} style={{ margin: "auto" }}>
               <div className="input-group">
                 <label htmlFor="username">Username</label>
                 <input
                   type="text"
-                  id="username"
+                  id="username2"
                   name="username"
                   placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={loginUsername}
+                  onChange={(e) => setLoginUsername(e.target.value)}
                 />
               </div>
               <div className="input-group">
                 <label htmlFor="password">Password</label>
                 <input
                   type="password"
-                  id="password"
+                  id="password2"
                   name="password"
                   placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
                 />
               </div>
 

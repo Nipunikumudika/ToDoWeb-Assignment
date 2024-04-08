@@ -1,12 +1,10 @@
 import "./Dashboard.css";
-
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import check from "../Images/check.png";
 import cross from "../Images/cross.png";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./Card.css";
-// import { Route, Routes, useNavigate } from "react-router-dom";
 import Popup from "../components/popup";
 import { ToDoTask } from "../Models/ToDoTask";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,17 +14,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Dashboard() {
-  // const navigate = useNavigate();
-  const bcrypt = require("bcryptjs");
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-
-  // const location = useLocation();
-  const [userid, setUserid] = useState<number>(1);
+  const location = useLocation();
   const [taskid, setTaskid] = useState<number>();
   const [taskName, setTaskname] = useState<string>("");
   const [taskiscompleted, setTaskIsCompleted] = useState<boolean>(false);
   const [allTasks, setAllTasks] = useState<ToDoTask[]>([]);
-  const [password, setPassword] = useState<string>("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -40,6 +34,8 @@ function Dashboard() {
     setTaskIsCompleted(false);
   };
 
+
+  //get details to edit window
   const handleEditView = async (
     event: React.MouseEvent<HTMLButtonElement>,
     key: number
@@ -54,15 +50,8 @@ function Dashboard() {
       setTaskid(key);
       setTaskname(response.data.taskName);
       setDescription(response.data.description);
-      const dateTimeString = response.data.date;
-      const [dateString, timeString] = dateTimeString.split("T");
-      const date = new Date(dateString);
-      const time = new Date(`1970-01-01T${timeString}`);
-      const formattedDate = date.toISOString().split("T")[0]; // Extracting date part
-      const formattedTime = time.toTimeString().split(" ")[0]; // Extracting time part
-
-      setDate(formattedDate);
-      setTime(formattedTime);
+      setDate(response.data.date);
+      setTime(response.data.time);
       setTaskIsCompleted(response.data.taskStatus);
       console.log(response);
     } catch (error) {
@@ -70,29 +59,31 @@ function Dashboard() {
     }
   };
 
-  const handleEditChange = async () => {
-    console.log("changing");
 
+  //button click change
+  const handleEditChange = async () => {
     try {
       const url = `https://localhost:7110/api/Tasks/${taskid}`;
-      const dateTime = new Date(`${date}T${time}`);
-      console.log(dateTime);
+
+      const dateTimeString = `${date}T${time}`;
+      const dateTime = new Date(dateTimeString);
+
+      // Get the current date and time
       const currentDate = new Date();
-      if (dateTime < currentDate) {
+      // Compare the given date and time with the current date and time
+     if(dateTime < currentDate && taskiscompleted===false) {
+      console.log(taskiscompleted);
         toast("Error! Check Date & Time");
         return;
-      }
-      
-      const formattedDateTime = dateTime
-        .toISOString()
-        .replace(/\.(\d+)Z$/, ".$1");
-      console.log(formattedDateTime);
-
+      } 
+      console.log(currentDate);
+      console.log(dateTime);
       const submitData = {
         id: taskid,
-        userId: userid,
+        username: location.state.username,
         taskName: taskName,
-        date: formattedDateTime,
+        date: date,
+        time: time,
         taskStatus: taskiscompleted,
         description: description,
       };
@@ -111,6 +102,8 @@ function Dashboard() {
     }
   };
 
+
+  //delete a task
   const handleDelete = async (
     event: React.MouseEvent<HTMLButtonElement>,
     key: number
@@ -130,54 +123,67 @@ function Dashboard() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  });
 
+
+  //create a task
   const handleNewTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const url = "https://localhost:7110/api/Tasks";
     try {
-      const dateTime = new Date(`${date}T${time}`);
+      const dateTimeString = `${date}T${time}`;
+      const dateTime = new Date(dateTimeString);
+
+      // Get the current date and time
       const currentDate = new Date();
-      if (dateTime < currentDate) {
-        toast("Failed to add ToDoTask. Check Date & Time!");
+
+      // Compare the given date and time with the current date and time
+     if(dateTime < currentDate) {
+        toast("Error! Check Date & Time");
         return;
-      }
+      } 
       const submitData = {
-        userId: userid,
+        username: location.state.username,
         taskName: taskName,
-        date: dateTime,
+        date: date,
+        time: time,
         taskStatus: taskiscompleted,
         description: description,
       };
       const response = await axios.post(url, submitData);
       console.log(response);
-      toast("Added!");
+
       setTaskname("");
       setDescription("");
       setTime("");
       setDate("");
       setTaskIsCompleted(false);
       fetchData();
+      toast("Task Added!");
     } catch (error) {
       console.log(error);
       toast("Error!");
     }
   };
 
+
+  //get all tasks according to username
   const fetchData = async () => {
     try {
       const response = await axios.get("https://localhost:7110/api/Tasks");
       if (response && response.data && Array.isArray(response.data)) {
-        // Filter tasks based on userid
-        const filteredTasks = response.data.filter(task => task.userId === userid);
-        
+        // Filter tasks based on username
+        const filteredTasks = response.data.filter(
+          (task) => task.userName === location.state.username
+        );
+
         // Sort the filtered tasks by date
         const sortedTasks = filteredTasks.sort((a, b) => {
           const dateA = new Date(a.date).getTime();
           const dateB = new Date(b.date).getTime();
           return dateA - dateB;
         });
-        
+
         // Set the filtered and sorted tasks in state
         setAllTasks(sortedTasks);
       } else {
@@ -187,20 +193,33 @@ function Dashboard() {
       console.error("Error fetching tasks:", error);
     }
   };
-  
-  
-  
 
+
+
+  //tasks block
   const userDetailsCards = allTasks.map((ToDoTask, key) => {
     let image = cross;
     if (ToDoTask.taskStatus === true) {
       image = check;
     }
-    const currentDate = new Date();
-    const taskDate = new Date(ToDoTask.date);
-   
+
+    let currentDatenow = new Date();
+    const dateTimeString = `${ToDoTask.date}T${ToDoTask.time}`;
+      const dateTime = new Date(dateTimeString);
+
+
     return (
-      <div className={`card-bg ${(new Date(ToDoTask.date) < currentDate && ToDoTask.taskStatus === false) ? 'past-task' : (new Date(ToDoTask.date) < currentDate && ToDoTask.taskStatus === true ? 'completed-task' : '')}`} key={ToDoTask.id}>
+      <div
+        className={`card-bg ${
+          new Date(dateTime) < currentDatenow && ToDoTask.taskStatus === false
+            ? "past-task"
+            : new Date(dateTime) < currentDatenow &&
+              ToDoTask.taskStatus === true
+            ? "completed-task"
+            : ""
+        }`}
+        key={ToDoTask.id}
+      >
         <img src={image} alt="user photo" className="card-image" />
         <div style={{ display: "flex", flexDirection: "column", width: "96%" }}>
           <div className="card-name">{ToDoTask.taskName}</div>
@@ -214,11 +233,26 @@ function Dashboard() {
             }}
           >
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <div className="card-date">
-                {new Date(ToDoTask.date).toLocaleDateString()}
-              </div>
+              <div className="card-date">{ToDoTask.date}</div>
               <div className="card-time">
-                {new Date(ToDoTask.date).toLocaleTimeString()}
+                {(() => {
+                  // Split the time string into hours and minutes
+                  const [hours, minutes] = ToDoTask.time.split(":").map(Number);
+
+                  // Convert hours to 12-hour format
+                  let hours12Hour = hours % 12;
+                  hours12Hour = hours12Hour || 12; // Set 0 to 12 if it's 0 (midnight)
+
+                  // Determine if it's AM or PM
+                  const meridiem = hours < 12 ? "AM" : "PM";
+
+                  // Create the 12-hour time string
+                  const time12Hour = `${hours12Hour}:${minutes
+                    .toString()
+                    .padStart(2, "0")} ${meridiem}`;
+
+                  return time12Hour;
+                })()}
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "row" }}>
@@ -241,13 +275,13 @@ function Dashboard() {
     );
   });
 
-  const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    // navigate("../");
+  const handdleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    navigate("/");
   };
 
   return (
     <div className="background">
-     <ToastContainer />
+      <ToastContainer />
       <div
         style={{
           backgroundColor: "rgb(133, 245, 12)",
@@ -261,7 +295,6 @@ function Dashboard() {
         }}
       >
         <div style={{ padding: "auto", margin: "auto" }}>
-          {/* {location.state.username} */}
         </div>
         <button
           style={{
@@ -274,7 +307,7 @@ function Dashboard() {
             backgroundColor: "transparent",
             cursor: "pointer",
           }}
-          // onClick={(event) => handdleLogout(event)}
+          onClick={(event) => handdleLogout(event)}
         >
           LogOut
         </button>
