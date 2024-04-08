@@ -12,6 +12,8 @@ import { ToDoTask } from "../Models/ToDoTask";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Dashboard() {
   // const navigate = useNavigate();
@@ -19,7 +21,7 @@ function Dashboard() {
   const [isOpen, setIsOpen] = useState(false);
 
   // const location = useLocation();
-  const [userid, setUserid] = useState<number>(0);
+  const [userid, setUserid] = useState<number>(1);
   const [taskid, setTaskid] = useState<number>();
   const [taskName, setTaskname] = useState<string>("");
   const [taskiscompleted, setTaskIsCompleted] = useState<boolean>(false);
@@ -77,7 +79,7 @@ function Dashboard() {
       console.log(dateTime);
       const currentDate = new Date();
       if (dateTime < currentDate) {
-        alert("Failed to update ToDoTask. Check Date & Time");
+        toast("Error! Check Date & Time");
         return;
       }
       
@@ -119,9 +121,10 @@ function Dashboard() {
       const response = await axios.delete(url);
       console.log(response);
       console.log("ToDoTask deleted successfully");
+      toast("Deleted!");
       fetchData();
     } catch (error) {
-      alert("Error! Cannot Delete");
+      toast("Error!");
     }
   };
 
@@ -136,7 +139,7 @@ function Dashboard() {
       const dateTime = new Date(`${date}T${time}`);
       const currentDate = new Date();
       if (dateTime < currentDate) {
-        alert("Failed to add ToDoTask. Check Date & Time");
+        toast("Failed to add ToDoTask. Check Date & Time!");
         return;
       }
       const submitData = {
@@ -148,7 +151,7 @@ function Dashboard() {
       };
       const response = await axios.post(url, submitData);
       console.log(response);
-      console.log("ToDoTask added successfully");
+      toast("Added!");
       setTaskname("");
       setDescription("");
       setTime("");
@@ -157,7 +160,7 @@ function Dashboard() {
       fetchData();
     } catch (error) {
       console.log(error);
-      alert("Failed to add ToDoTask");
+      toast("Error!");
     }
   };
 
@@ -165,11 +168,17 @@ function Dashboard() {
     try {
       const response = await axios.get("https://localhost:7110/api/Tasks");
       if (response && response.data && Array.isArray(response.data)) {
-        const sortedTasks = response.data.sort((a, b) => {
+        // Filter tasks based on userid
+        const filteredTasks = response.data.filter(task => task.userId === userid);
+        
+        // Sort the filtered tasks by date
+        const sortedTasks = filteredTasks.sort((a, b) => {
           const dateA = new Date(a.date).getTime();
           const dateB = new Date(b.date).getTime();
           return dateA - dateB;
         });
+        
+        // Set the filtered and sorted tasks in state
         setAllTasks(sortedTasks);
       } else {
         console.error("Invalid response format or data structure:", response);
@@ -178,6 +187,7 @@ function Dashboard() {
       console.error("Error fetching tasks:", error);
     }
   };
+  
   
   
 
@@ -237,6 +247,7 @@ function Dashboard() {
 
   return (
     <div className="background">
+     <ToastContainer />
       <div
         style={{
           backgroundColor: "rgb(133, 245, 12)",
