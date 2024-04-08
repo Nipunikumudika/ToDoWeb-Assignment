@@ -1,0 +1,84 @@
+
+  .backgroundlogin {
+    background-color: red; 
+    background-image: linear-gradient(lightblue, blue);
+    min-height: 100vh; 
+    margin: 0;
+    overflow-x: hidden;
+}
+.reg-and-login {
+    padding: 3% 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%; 
+    margin-top: 2vw;
+}
+
+
+  .login {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.65);
+    padding: 30px;
+    width: 25vw;
+    margin: 3vw;
+  }
+  
+  .login-text {
+    color: blue;
+    font-size: 2em;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(to right, #f32170, #ff6b08, #cf23cf, #eedd44);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+  }
+  
+  .input-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input-group label {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+  }
+  
+  .input-group input {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  .loginbtn {
+    background: linear-gradient(to right, #f32170, #ff6b08, #cf23cf, #eedd44);
+    border: none;
+    border-radius: 21px;
+    box-shadow: 0px 1px 8px #24c64f;
+    cursor: pointer;
+    color: white;
+    font-family: "Raleway SemiBold", sans-serif;
+    height: 42.3px;
+    margin: 0 auto;
+    transition: 0.25s;
+    width: 100%;
+    max-width: 200px;
+    font-size: larger;
+  }
+  
+
+  @media (max-width: 1350px) {
+    .reg-and-login {
+        padding: 3% 10%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+       
+    }
+
+    .login{
+        width: 70vw;
+    }
+}
